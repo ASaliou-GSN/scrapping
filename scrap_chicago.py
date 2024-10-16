@@ -13,17 +13,23 @@ service = Service()
 driver = webdriver.Chrome()
 
 
-#athletes = []
-page = 27
-url = f'https://results.chicagomarathon.com/2024/?page={page}&event=MAR&event_main_group=runner&num_results=1000&pid=list&search%5Bsex%5D=M&search%5Bage_class%5D=%25'
+athletes = []
+page = 1
+#men
+#url = f'https://results.chicagomarathon.com/2024/?page={page}&event=MAR&event_main_group=runner&num_results=1000&pid=list&search%5Bsex%5D=M&search%5Bage_class%5D=%25'
+#women
 #url = f'https://results.chicagomarathon.com/2024/?page={page}&event=MAR&event_main_group=runner&num_results=1000&pid=list&search%5Bsex%5D=W&search%5Bage_class%5D=%25'
-# URL de départ
+#non-b
+#url = f'https://results.chicagomarathon.com/2024/?pid=list&fpid=list&lang=EN_CAP&event=MAR&event_main_group=runner&num_results=1000&search%5Bsex%5D=D&search%5Bage_class%5D=%25&search_event=MAR'
+#non-s
+url = f'https://results.chicagomarathon.com/2024/?pid=list&fpid=list&lang=EN_CAP&event=MAR&event_main_group=runner&num_results=1000&search%5Bsex%5D=N&search%5Bage_class%5D=%25&search_event=MAR'
+#starting url
 driver.get(url)
 
 page_xpaths = [f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[2]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[4]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[5]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[7]/a']+\
               [f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[7]/a']*353
 
-while page < 29:
+while page < 2:
     try:
         #access the link to each athletes
         links = driver.find_elements(By.CSS_SELECTOR, '#cbox-main div ul li div h4 a')
@@ -71,7 +77,7 @@ while page < 29:
 
             print(f"Processed page {page}")
         
-        with open(f"Chicago_2024_{page}.pkl", 'wb') as f:
+        with open(f"usChicago_2024_{page}.pkl", 'wb') as f:
             pickle.dump(athletes, f)
 
         
@@ -106,5 +112,5 @@ while page < 29:
         break
 
 #save the full athletes data in a global file
-with open('Chicago_2024_final.pkl', 'wb') as f:
+with open('usChicago_2024_final.pkl', 'wb') as f:
     pickle.dump(athletes, f)
