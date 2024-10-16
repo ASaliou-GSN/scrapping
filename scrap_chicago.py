@@ -23,7 +23,7 @@ driver.get(url)
 page_xpaths = [f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[2]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[4]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[5]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[7]/a']+\
               [f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[7]/a']*353
 
-while page < 355:
+while page < 29:
     try:
         #access the link to each athletes
         links = driver.find_elements(By.CSS_SELECTOR, '#cbox-main div ul li div h4 a')
