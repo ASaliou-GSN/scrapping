@@ -15,15 +15,15 @@ driver = webdriver.Chrome()
 
 athletes = []
 page = 1
-url = f'https://results.chicagomarathon.com/2024/?page={page}&event=MAR&event_main_group=runner&num_results=1000&pid=list&search%5Bsex%5D=M&search%5Bage_class%5D=%25'
-
+#url = f'https://results.chicagomarathon.com/2024/?page={page}&event=MAR&event_main_group=runner&num_results=1000&pid=list&search%5Bsex%5D=M&search%5Bage_class%5D=%25'
+url = f'https://results.chicagomarathon.com/2024/?page={page}&event=MAR&event_main_group=runner&num_results=1000&pid=list&search%5Bsex%5D=W&search%5Bage_class%5D=%25'
 # URL de départ
 driver.get(url)
 
 page_xpaths = [f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[2]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[4]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[5]/a',f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[7]/a']+\
               [f'//*[@id="cbox-main"]/div[3]/div[2]/div/ul/li[7]/a']*353
 
-while page < 29:
+while page < 25:
     try:
         #access the link to each athletes
         links = driver.find_elements(By.CSS_SELECTOR, '#cbox-main div ul li div h4 a')
@@ -71,10 +71,8 @@ while page < 29:
 
             print(f"Processed page {page}")
         
-        #every 10 pages we save the data
-        if page % 10 == 0:
-            with open(f"Berlin_2024_1-{page}.pkl", 'wb') as f:
-                pickle.dump(athletes, f)
+        with open(f"wChicago_2024_{page}.pkl", 'wb') as f:
+            pickle.dump(athletes, f)
 
         
         #click next page button, initiated at the beginning 
@@ -106,3 +104,7 @@ while page < 29:
     except Exception as e:
         print(f"Error processing page {page}: {e}")
         break
+
+#save the full athletes data in a global file
+with open('wChicago_2024_final.pkl', 'wb') as f:
+    pickle.dump(athletes, f)
