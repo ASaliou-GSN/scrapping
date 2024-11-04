@@ -39,7 +39,8 @@ result_details_body = {
 print(f"{datetime.now().strftime('%H:%M:%S')} - START OF EXTRACTION FROM BIB {first_bib_number} TO BIB {last_bib_number}")
 
 for bib in bib_numbers:
-    if bib == 20 : print(athletes)
+    #check if right race
+    #if bib == 20 : print(athletes)
     if bib % 200 == 1:
         print(f"{datetime.now().strftime('%H:%M:%S')} - Bib number {bib}..")
 # =============================================================================
