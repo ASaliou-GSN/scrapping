@@ -21,6 +21,7 @@ with open('NYC_2022_1-6978.pkl', 'rb') as f:
 
 
 
+
 max_runners = 70000
 first_bib_number = 6979
 last_bib_number = first_bib_number + max_runners
