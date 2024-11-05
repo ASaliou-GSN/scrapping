@@ -19,9 +19,6 @@ athletes=[]
 #with open('NYC_2024_1-6978.pkl', 'rb') as f:
 #    athletes = pickle.load(f)
 
-
-
-
 max_runners = 70000
 first_bib_number = 1
 last_bib_number = first_bib_number + max_runners
@@ -63,7 +60,13 @@ for bib in bib_numbers:
 
     try:
         response = requests.post(**event_runner_parameters)
+        #print(bib,response)
+        if response.status_code == 429 : 
+            time.sleep(0.3)
+            response = requests.post(**event_runner_parameters)
+        #    print(bib,response)
         finisher = response.json().get('finisher')
+        
         if finisher:
             #finishers.append(finisher)
             name,age,gender = finisher['firstName']+' '+finisher['lastName'],finisher['age'],finisher['gender']
@@ -74,11 +77,16 @@ for bib in bib_numbers:
                 'data': json.dumps(result_details_body)
             }
             response = requests.post(**result_details_parameters)
+            if response.status_code == 429 : 
+                time.sleep(0.3)
+                response = requests.post(**result_details_parameters)
+            #    print(bib,response)
             finisher_details = response.json().get('details', {}).get('splitResults')
             if finisher_details:
                 splits = [x['time'] for x in response.json().get('details', {}).get('splitResults')] 
             else:
                 print(f"No split times for bib {bib}")
+            
             athletes.append([name,age,gender,bib]+splits)
         else:
             print(f"No stats for bib {bib}")
