@@ -6,24 +6,23 @@ from datetime import datetime ; import pickle
 
 to = time.time()
 
-event_code = 'm2022'
+event_code = 'm2024'
 new_york_stats_file_name = f"NewYorkStats-{event_code}.csv"
 new_york_stats_split_times_file_name = f"NewYorkStatsSplitTimes-{event_code}.csv"
 event_runner_uri = 'https://rmsprodapi.nyrr.org/api/v2/runners/eventRunner'
 result_details_uri = 'https://rmsprodapi.nyrr.org/api/v2/runners/resultDetails'
 
-#finishers = []
-#finishers_details = []
-#athletes=[]
+finishers = []
+finishers_details = []
+athletes=[]
 
-with open('NYC_2022_1-6978.pkl', 'rb') as f:
-    athletes = pickle.load(f)
-
+#with open('NYC_2022_1-6978.pkl', 'rb') as f:
+#    athletes = pickle.load(f)
 
 
 
 max_runners = 70000
-first_bib_number = 6979
+first_bib_number = 1
 last_bib_number = first_bib_number + max_runners
 bib_numbers = range(first_bib_number, last_bib_number + 1)
 
@@ -61,10 +60,19 @@ for bib in bib_numbers:
 
     try:
         response = requests.post(**event_runner_parameters)
-        finisher = response.json().get('finisher')
+        while response.status_code == 429: 
+            time.sleep(0.5) 
+            response = requests.post(**event_runner_parameters)
+        try : 
+            finisher = response.json().get('finisher')
+        except :
+            #print("retry_finisher")
+            time.sleep(0.5)
+            finisher = response.json().get('finisher')
+
         if finisher:
             #finishers.append(finisher)
-            name,age,gender = finisher['firstName']+' '+finisher['lastName'],finisher['age'],finisher['gender']
+            name,age,gender,country = finisher['firstName']+' '+finisher['lastName'],finisher['age'],finisher['gender'],finisher['iaaf']
             result_details_body['runnerId'] = finisher['runnerId']
             result_details_parameters = {
                 'url': result_details_uri,
@@ -72,12 +80,22 @@ for bib in bib_numbers:
                 'data': json.dumps(result_details_body)
             }
             response = requests.post(**result_details_parameters)
-            finisher_details = response.json().get('details', {}).get('splitResults')
+            while response.status_code == 429: 
+                time.sleep(0.5)
+                response = requests.post(**result_details_parameters)
+            #print("before details",bib)
+            try : 
+                finisher_details = response.json().get('details', {}).get('splitResults')
+            except :
+                #print("retry_details")
+                time.sleep(0.5)
+                finisher_details = response.json().get('details', {}).get('splitResults')
+            #print("after details",bib)
             if finisher_details:
                 splits = [x['time'] for x in response.json().get('details', {}).get('splitResults')] 
             else:
                 print(f"No split times for bib {bib}")
-            athletes.append([name,age,gender,bib]+splits)
+            athletes.append([name,age,gender,country]+splits)
         else:
             print(f"No stats for bib {bib}")
         time.sleep(0.1)
@@ -98,7 +116,7 @@ for bib in bib_numbers:
                         splits = [x['time'] for x in response.json().get('details', {}).get('splitResults')] 
                 else:
                     print(f"No split times for bib {bib}")
-                athletes.append([name,age,gender,bib]+splits)
+                athletes.append([name,age,gender,country]+splits)
 
         else:
             print(f"An error occurred when retrieving bib '{bib}' => {e}")
